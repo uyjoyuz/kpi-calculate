@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KPI Hisoblagich</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">KPI Hisoblagich</h2>
+
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div>
+                <label class="block font-semibold mb-2">Oyliq ish kuni:</label>
+                <input type="number" id="workDays" value="22" class="border p-2 w-full" oninput="calculatePlan()">
+            </div>
+            <div>
+                <label class="block font-semibold mb-2">KPI Summasi (so'm):</label>
+                <input type="number" id="kpiInput" value="4000000" class="border p-2 w-full" oninput="calculateKPI()">
+            </div>
+        </div>
+
+        <table class="w-full border-collapse border text-center">
+            <thead class="bg-gray-200">
+                <tr>
+                    <th class="border p-2">Ko'rsatkich</th>
+                    <th class="border p-2">Reja</th>
+                    <th class="border p-2">Fakt</th>
+                    <th class="border p-2">Samaradorlik (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="border p-2">Nashr qilish</td>
+                    <td class="border p-2" id="plan1">0</td>
+                    <td class="border p-2"><input type="number" id="fact1" class="border p-2 w-full" oninput="calculateKPI()"></td>
+                    <td class="border p-2" id="percent1">0%</td>
+                </tr>
+                <tr>
+                    <td class="border p-2">Analog qo'shish</td>
+                    <td class="border p-2" id="plan2">0</td>
+                    <td class="border p-2"><input type="number" id="fact2" class="border p-2 w-full" oninput="calculateKPI()"></td>
+                    <td class="border p-2" id="percent2">0%</td>
+                </tr>
+                <tr>
+                    <td class="border p-2">Dars o'tish (daqiqa)</td>
+                    <td class="border p-2" id="plan3">0</td>
+                    <td class="border p-2"><input type="number" id="fact3" class="border p-2 w-full" oninput="calculateKPI()"></td>
+                    <td class="border p-2" id="percent3">0%</td>
+                </tr>
+                <tr class="bg-gray-200 font-bold">
+                    <td class="border p-2">Jami</td>
+                    <td class="border p-2">100%</td>
+                    <td class="border p-2" id="totalFact">0</td>
+                    <td class="border p-2" id="totalPercent">0%</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3 class="text-xl font-bold mt-4">KPI Summa: <span id="totalKPI">4,000,000</span> so'm</h3>
+    </div>
+
+    <script>
+        function calculatePlan() {
+            let workDays = parseInt(document.getElementById("workDays").value) || 0;
+            document.getElementById("plan1").innerText = workDays * 60;
+            document.getElementById("plan2").innerText = workDays * 18;
+            document.getElementById("plan3").innerText = workDays * 480;
+            calculateKPI();
+        }
+
+        function calculateKPI() {
+            let plan1 = parseInt(document.getElementById("plan1").innerText) || 1;
+            let plan2 = parseInt(document.getElementById("plan2").innerText) || 1;
+            let plan3 = parseInt(document.getElementById("plan3").innerText) || 1;
+            
+            let fact1 = parseInt(document.getElementById("fact1").value) || 0;
+            let fact2 = parseInt(document.getElementById("fact2").value) || 0;
+            let fact3 = parseInt(document.getElementById("fact3").value) || 0;
+
+            let percent1 = (fact1 / plan1) * 100;
+            let percent2 = (fact2 / plan2) * 100;
+            let percent3 = (fact3 / plan3) * 100;
+
+            document.getElementById("percent1").innerText = percent1.toFixed(2) + "%";
+            document.getElementById("percent2").innerText = percent2.toFixed(2) + "%";
+            document.getElementById("percent3").innerText = percent3.toFixed(2) + "%";
+
+            let totalFact = fact1 + fact2 + fact3;
+            let totalPercent = percent1 + percent2 + percent3; // O'rtacha emas, yig'indisi
+
+            document.getElementById("totalFact").innerText = totalFact;
+            document.getElementById("totalPercent").innerText = totalPercent.toFixed(1) + "%";
+
+            let baseKPI = parseInt(document.getElementById("kpiInput").value) || 4000000;
+            let totalKPI = baseKPI;
+
+            if (totalPercent < 80) {
+                totalKPI *= (totalPercent / 80);
+            } else if (totalPercent > 100) {
+                totalKPI *= (totalPercent / 100);
+            }
+
+            document.getElementById("totalKPI").innerText = totalKPI.toLocaleString("uz-UZ");
+        }
+
+        window.onload = calculatePlan;
+    </script>
+</body>
+</html>
